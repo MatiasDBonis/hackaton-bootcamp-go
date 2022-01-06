@@ -8,10 +8,10 @@ import (
 )
 
 type Invoices struct {
-	id          int
-	datetime    string
-	id_customer string
-	total       float64
+	Id         int     `csv:"id"`
+	Datetime   string  `csv:"datetime"`
+	IdCustomer string  `csv:"id_customer"`
+	Total      float64 `csv:"total"`
 }
 
 type Repository interface {
@@ -27,13 +27,13 @@ func NewRepository() Repository {
 func (r *repository) Insert(invoice Invoices) (Invoices, error) {
 	db := db.StorageDB
 
-	stmt, err := db.Prepare("INSERT INTO invoices (id, datetime, id_customer, total) VALUES(?, ?, ?, ?)")
+	stmt, err := db.Prepare("INSERT INTO invoices (id, datetime, idcustomer, total) VALUES(?, ?, ?, ?)")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer stmt.Close()
 
-	result, err := stmt.Exec(invoice.id, invoice.datetime, invoice.id_customer, invoice.total)
+	result, err := stmt.Exec(invoice.Id, invoice.Datetime, invoice.IdCustomer, invoice.Total)
 	if err != nil {
 		return Invoices{}, err
 	}

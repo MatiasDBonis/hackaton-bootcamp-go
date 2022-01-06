@@ -8,9 +8,9 @@ import (
 )
 
 type Sales struct {
-	id         int
-	id_product int
-	price      float32
+	Id        int     `csv:"id"`
+	IdProduct int     `csv:"id_product"`
+	Price     float32 `csv:"price"`
 }
 
 type Repository interface {
@@ -33,7 +33,7 @@ func (r *repository) Insert(sale Sales) (Sales, error) {
 	}
 	defer stmt.Close()
 
-	result, err := stmt.Exec(sale.id, sale.id_product, sale.price)
+	result, err := stmt.Exec(sale.Id, sale.IdProduct, sale.Price)
 	if err != nil {
 		return Sales{}, err
 	}
@@ -54,7 +54,7 @@ func (r *repository) Update(sale Sales) (Sales, error) {
 	}
 	defer stmt.Close()
 
-	result, err := stmt.Exec(sale.id_product, sale.price, sale.id)
+	result, err := stmt.Exec(sale.IdProduct, sale.Price, sale.Id)
 	if err != nil {
 		return Sales{}, err
 	}

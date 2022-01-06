@@ -8,9 +8,9 @@ import (
 )
 
 type Products struct {
-	id          int
-	description string
-	price       float32
+	Id          int     `csv:"id"`
+	Description string  `csv:"description"`
+	Price       float32 `csv:"price"`
 }
 
 type Repository interface {
@@ -33,7 +33,7 @@ func (r *repository) Insert(product Products) (Products, error) {
 	}
 	defer stmt.Close()
 
-	result, err := stmt.Exec(product.id, product.description, product.price)
+	result, err := stmt.Exec(product.Id, product.Description, product.Price)
 	if err != nil {
 		return Products{}, err
 	}
@@ -54,7 +54,7 @@ func (r *repository) Update(product Products) (Products, error) {
 	}
 	defer stmt.Close()
 
-	result, err := stmt.Exec(product.description, product.price, product.id)
+	result, err := stmt.Exec(product.Description, product.Price, product.Id)
 	if err != nil {
 		return Products{}, err
 	}

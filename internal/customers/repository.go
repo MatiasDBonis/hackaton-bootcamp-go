@@ -8,10 +8,10 @@ import (
 )
 
 type Customers struct {
-	id         int
-	last_name  string
-	first_name string
-	condition  string
+	Id        int    `csv:"id"`
+	LastName  string `csv:"last_name"`
+	FirstName string `csv:"first_name"`
+	Condition string `csv:"condition"`
 }
 
 type Repository interface {
@@ -34,7 +34,7 @@ func (r *repository) Insert(customer Customers) (Customers, error) {
 	}
 	defer stmt.Close()
 
-	result, err := stmt.Exec(customer.id, customer.last_name, customer.first_name, customer.condition)
+	result, err := stmt.Exec(customer.Id, customer.LastName, customer.FirstName, customer.Condition)
 	if err != nil {
 		return Customers{}, err
 	}
@@ -55,7 +55,7 @@ func (r *repository) Update(customer Customers) (Customers, error) {
 	}
 	defer stmt.Close()
 
-	result, err := stmt.Exec(customer.last_name, customer.first_name, customer.condition, customer.id)
+	result, err := stmt.Exec(customer.LastName, customer.FirstName, customer.Condition, customer.Id)
 	if err != nil {
 		return Customers{}, err
 	}
