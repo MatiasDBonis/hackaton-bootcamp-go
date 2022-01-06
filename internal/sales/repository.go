@@ -1,16 +1,16 @@
 package internal
 
 import (
+	"database/sql"
 	"errors"
 	"log"
-
-	"github.com/MatiasDBonis/hackaton-bootcamp-go.git/pkg/db"
 )
 
 type Sales struct {
 	Id        int     `csv:"id"`
+	IdInvoice int     `csv:"id_invoice"`
 	IdProduct int     `csv:"id_product"`
-	Price     float32 `csv:"price"`
+	Quantity  float32 `csv:"quantity"`
 }
 
 type Repository interface {
@@ -18,22 +18,22 @@ type Repository interface {
 	Update(customer Sales) (Sales, error)
 }
 
-type repository struct{}
+type repository struct {
+	db *sql.DB
+}
 
-func NewRepository() Repository {
-	return &repository{}
+func NewRepository(db *sql.DB) Repository {
+	return &repository{db: db}
 }
 
 func (r *repository) Insert(sale Sales) (Sales, error) {
-	db := db.StorageDB
-
-	stmt, err := db.Prepare("INSERT INTO sales (id, id_product, price) VALUES(?, ?, ?)")
+	stmt, err := r.db.Prepare("INSERT INTO sales (id, idinvoice, idproduct, quantity) VALUES(?, ?, ?, ?)")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer stmt.Close()
 
-	result, err := stmt.Exec(sale.Id, sale.IdProduct, sale.Price)
+	result, err := stmt.Exec(sale.Id, sale.IdInvoice, sale.IdProduct, sale.Quantity)
 	if err != nil {
 		return Sales{}, err
 	}
@@ -46,15 +46,13 @@ func (r *repository) Insert(sale Sales) (Sales, error) {
 }
 
 func (r *repository) Update(sale Sales) (Sales, error) {
-	db := db.StorageDB
-
-	stmt, err := db.Prepare("UPDATE sales SET id_product = ?, price = ? WHERE id = ?")
+	stmt, err := r.db.Prepare("UPDATE sales SET idinvoice = ?, idproduct = ?, quantity = ? WHERE id = ?")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer stmt.Close()
 
-	result, err := stmt.Exec(sale.IdProduct, sale.Price, sale.Id)
+	result, err := stmt.Exec(sale.IdInvoice, sale.IdProduct, sale.Quantity, sale.Id)
 	if err != nil {
 		return Sales{}, err
 	}

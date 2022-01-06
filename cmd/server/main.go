@@ -1,66 +1,115 @@
 package main
 
 import (
-	"fmt"
-	"os"
-	"strings"
+	"encoding/csv"
+	"io"
 
 	customers "github.com/MatiasDBonis/hackaton-bootcamp-go.git/internal/customers"
+	invoices "github.com/MatiasDBonis/hackaton-bootcamp-go.git/internal/invoices"
+	products "github.com/MatiasDBonis/hackaton-bootcamp-go.git/internal/products"
+	sales "github.com/MatiasDBonis/hackaton-bootcamp-go.git/internal/sales"
 	"github.com/MatiasDBonis/hackaton-bootcamp-go.git/pkg/db"
+	parser "github.com/MatiasDBonis/hackaton-bootcamp-go.git/pkg/parser"
 	"github.com/gin-gonic/gin"
 	"github.com/gocarina/gocsv"
 )
 
 func main() {
-	customerFileName := "customers.txt"
-	customersSlice, err := parseCustomers(customerFileName)
-	if err != nil {
-		panic(err.Error())
-	}
+	gocsv.SetCSVReader(func(in io.Reader) gocsv.CSVReader {
+		r := csv.NewReader(in)
+		r.Comma = ';' // This is our separator now
+		return r
+	})
 
 	router := gin.Default()
 
 	repoCustomers := customers.NewRepository(db.StorageDB)
 	serviceCustomers := customers.NewService(repoCustomers)
 
-	//docs.SwaggerInfo.Host = os.Getenv("HOST")
-	//router.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	repoProducts := products.NewRepository(db.StorageDB)
+	serviceProducts := products.NewService(repoProducts)
 
-	//	router.Use(TokenAuthMiddleware())
+	repoSales := sales.NewRepository(db.StorageDB)
+	serviceSales := sales.NewService(repoSales)
 
-	router.POST("/customers/insertAll", insertAll(serviceCustomers, customersSlice))
+	repoInvoices := invoices.NewRepository(db.StorageDB)
+	serviceInvoices := invoices.NewService(repoInvoices)
+
+	router.POST("/customers/insertAll", insertAllCustomers(serviceCustomers))
+	router.POST("/products/insertAll", insertAllProducts(serviceProducts))
+	router.POST("/sales/insertAll", insertAllSales(serviceSales))
+	router.POST("/invoices/insertAll", insertAllInvoices(serviceInvoices))
 
 	router.Run()
 }
 
-func parseCustomers(fileName string) ([]customers.Customers, error) {
-	var customersSlice []customers.Customers
-
-	data, err := os.ReadFile("../../datos/" + fileName)
-	if err != nil {
-		return []customers.Customers{}, err
-	}
-
-	dataString := string(data)
-	dataStringReplaced := strings.ReplaceAll(dataString, "#$%#", ",")
-
-	titles := "id,last_name,first_name,condition\n"
-
-	finalDataString := titles + dataStringReplaced
-	// json.Unmarshal([]byte(dataStringReplaced), &customers)
-	gocsv.UnmarshalString(finalDataString, &customersSlice)
-
-	fmt.Println(dataStringReplaced)
-	fmt.Println("SALTO DE LINEA")
-	fmt.Println(customersSlice)
-
-	return customersSlice, nil
-}
-
-func insertAll(service customers.Service, parsedCustomers []customers.Customers) gin.HandlerFunc {
+//Endpoints customers
+func insertAllCustomers(service customers.Service) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 
+		parsedCustomers, err := parser.ParseDataCustomers()
+		if err != nil {
+			panic(err.Error())
+		}
+
 		rowsAffected, err := service.InsertAll(parsedCustomers)
+
+		if err != nil {
+			ctx.String(400, "Hubo un error %v", err.Error())
+		} else {
+			ctx.String(200, "Registros afectados: %v", rowsAffected)
+		}
+	}
+}
+
+//Endpoints products
+func insertAllProducts(service products.Service) gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+
+		parsedProducts, err := parser.ParseDataProducts()
+		if err != nil {
+			panic(err.Error())
+		}
+
+		rowsAffected, err := service.InsertAll(parsedProducts)
+
+		if err != nil {
+			ctx.String(400, "Hubo un error %v", err.Error())
+		} else {
+			ctx.String(200, "Registros afectados: %v", rowsAffected)
+		}
+	}
+}
+
+//Endpoints sales
+func insertAllSales(service sales.Service) gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+
+		parsedSales, err := parser.ParseDataSales()
+		if err != nil {
+			panic(err.Error())
+		}
+
+		rowsAffected, err := service.InsertAll(parsedSales)
+
+		if err != nil {
+			ctx.String(400, "Hubo un error %v", err.Error())
+		} else {
+			ctx.String(200, "Registros afectados: %v", rowsAffected)
+		}
+	}
+}
+
+//Endpoints sales
+func insertAllInvoices(service invoices.Service) gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+
+		parsedInvoices, err := parser.ParseDataInvoices()
+		if err != nil {
+			panic(err.Error())
+		}
+
+		rowsAffected, err := service.InsertAll(parsedInvoices)
 
 		if err != nil {
 			ctx.String(400, "Hubo un error %v", err.Error())

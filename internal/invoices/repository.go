@@ -1,10 +1,9 @@
 package internal
 
 import (
+	"database/sql"
 	"errors"
 	"log"
-
-	"github.com/MatiasDBonis/hackaton-bootcamp-go.git/pkg/db"
 )
 
 type Invoices struct {
@@ -18,22 +17,22 @@ type Repository interface {
 	Insert(invoices Invoices) (Invoices, error)
 }
 
-type repository struct{}
+type repository struct {
+	db *sql.DB
+}
 
-func NewRepository() Repository {
-	return &repository{}
+func NewRepository(db *sql.DB) Repository {
+	return &repository{db: db}
 }
 
 func (r *repository) Insert(invoice Invoices) (Invoices, error) {
-	db := db.StorageDB
-
-	stmt, err := db.Prepare("INSERT INTO invoices (id, datetime, idcustomer, total) VALUES(?, ?, ?, ?)")
+	stmt, err := r.db.Prepare("INSERT INTO invoices (id, datetime, idcustomer, total) VALUES(?, ?, ?, (SELECT SUM(S.quantity) FROM sales S WHERE S.idinvoice = ?))")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer stmt.Close()
 
-	result, err := stmt.Exec(invoice.Id, invoice.Datetime, invoice.IdCustomer, invoice.Total)
+	result, err := stmt.Exec(invoice.Id, invoice.Datetime, invoice.IdCustomer, invoice.Id)
 	if err != nil {
 		return Invoices{}, err
 	}
