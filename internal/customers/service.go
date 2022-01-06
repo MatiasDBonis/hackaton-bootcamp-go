@@ -3,7 +3,7 @@ package internal
 import "fmt"
 
 type Service interface {
-	insert_all([]Customers) (int, error)
+	InsertAll([]Customers) (int, error)
 }
 
 type service struct {
@@ -14,7 +14,7 @@ func NewService(repository Repository) Service {
 	return &service{repo: repository}
 }
 
-func (s *service) insert_all(customers []Customers) (int, error) {
+func (s *service) InsertAll(customers []Customers) (int, error) {
 	affectedRows := 0
 	totalRows := len(customers)
 

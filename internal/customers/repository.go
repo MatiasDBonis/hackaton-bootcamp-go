@@ -1,10 +1,9 @@
 package internal
 
 import (
+	"database/sql"
 	"errors"
 	"log"
-
-	"github.com/MatiasDBonis/hackaton-bootcamp-go.git/pkg/db"
 )
 
 type Customers struct {
@@ -19,16 +18,17 @@ type Repository interface {
 	Update(customer Customers) (Customers, error)
 }
 
-type repository struct{}
+type repository struct {
+	db *sql.DB
+}
 
-func NewRepository() Repository {
-	return &repository{}
+func NewRepository(db *sql.DB) Repository {
+	return &repository{db: db}
 }
 
 func (r *repository) Insert(customer Customers) (Customers, error) {
-	db := db.StorageDB
-
-	stmt, err := db.Prepare("INSERT INTO customers (id, lastname, firstname, condition) VALUES(?, ?, ?, ?)")
+	stmt, err := r.db.Prepare("INSERT INTO customers(id, lastname, firstname, condicion) VALUES(?, ?, ?, ?)")
+	// db.Prepare("INSERT INTO personas(nombre, apellido, edad) VALUES( ?, ?, ? )")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -47,9 +47,7 @@ func (r *repository) Insert(customer Customers) (Customers, error) {
 }
 
 func (r *repository) Update(customer Customers) (Customers, error) {
-	db := db.StorageDB
-
-	stmt, err := db.Prepare("UPDATE customers SET lastname = ?, firstname = ?, condition = ? WHERE id = ?")
+	stmt, err := r.db.Prepare("UPDATE customers SET lastname = ?, firstname = ?, condition = ? WHERE id = ?")
 	if err != nil {
 		log.Fatal(err)
 	}
