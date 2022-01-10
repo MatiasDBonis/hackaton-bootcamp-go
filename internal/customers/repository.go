@@ -11,6 +11,7 @@ import (
 type Repository interface {
 	Insert(customer domain.Customers) (domain.Customers, error)
 	Update(customer domain.Customers) (domain.Customers, error)
+	GetTotals() ([]domain.DTOCustomerTotals, error)
 }
 
 type repository struct {
@@ -54,4 +55,22 @@ func (r *repository) Update(customer domain.Customers) (domain.Customers, error)
 	}
 
 	return customer, nil
+}
+
+func (r *repository) GetTotals() ([]domain.DTOCustomerTotals, error) {
+	var arrayTotals []domain.DTOCustomerTotals
+	var currentTotal domain.DTOCustomerTotals
+	rows, err := r.db.Query("SELECT condicion, ROUND(sum(i.total), 2) FROM customers c INNER JOIN invoices i ON i.idcustomer = c.id GROUP BY condicion")
+	for rows.Next() {
+		err = rows.Scan(&currentTotal.Status, &currentTotal.Total)
+		if err != nil {
+			log.Fatal(err)
+			return nil, err
+		}
+		arrayTotals = append(arrayTotals, currentTotal)
+	}
+	if err != nil {
+		return []domain.DTOCustomerTotals{}, err
+	}
+	return arrayTotals, nil
 }

@@ -9,6 +9,7 @@ import (
 type Service interface {
 	InsertAll([]domain.Customers) (int, error)
 	Update(customer domain.Customers) (domain.Customers, error)
+	GetTotals() ([]domain.DTOCustomerTotals, error)
 }
 
 type service struct {
@@ -38,4 +39,9 @@ func (s *service) InsertAll(customers []domain.Customers) (int, error) {
 
 func (s *service) Update(customer domain.Customers) (domain.Customers, error) {
 	return s.repo.Update(customer)
+}
+
+func (s *service) GetTotals() ([]domain.DTOCustomerTotals, error) {
+	data, err := s.repo.GetTotals()
+	return data, err
 }
