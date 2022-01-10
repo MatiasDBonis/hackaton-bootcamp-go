@@ -28,20 +28,16 @@ func (r *repository) Insert(invoice domain.Invoices) (domain.Invoices, error) {
 	}
 	defer stmt.Close()
 
-	result, err := stmt.Exec(invoice.Id, invoice.Datetime, invoice.IdCustomer, invoice.Id)
+	_, err = stmt.Exec(invoice.Id, invoice.Datetime, invoice.IdCustomer, invoice.Id)
 	if err != nil {
 		return domain.Invoices{}, err
-	}
-	rowsAffected, _ := result.RowsAffected()
-	if rowsAffected == 0 {
-		return domain.Invoices{}, errors.New("no se insertó el invoice")
 	}
 
 	return invoice, nil
 }
 
 func (r *repository) Update(invoice domain.Invoices) (domain.Invoices, error) {
-	stmt, err := r.db.Prepare("UPDATE invoices SET idcustomer = ?, total = ? WHERE id = ?")
+	stmt, err := r.db.Prepare("UPDATE invoices SET datetime = ?, idcustomer = ?, total = ? WHERE id = ?")
 	if err != nil {
 		log.Fatal(err)
 	}

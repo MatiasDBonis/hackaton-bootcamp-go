@@ -1,11 +1,9 @@
 package invoices
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/MatiasDBonis/hackaton-bootcamp-go.git/internal/domain"
-	"github.com/MatiasDBonis/hackaton-bootcamp-go.git/internal/sales"
 	"github.com/MatiasDBonis/hackaton-bootcamp-go.git/pkg/db"
 	"github.com/MatiasDBonis/hackaton-bootcamp-go.git/pkg/parser"
 	"github.com/stretchr/testify/assert"
@@ -20,20 +18,10 @@ func TestInsertOk(t *testing.T) {
 
 	service := NewService(repo)
 
-	repoSales := sales.NewRepository(db)
-	serviceSales := sales.NewService(repoSales)
-
-	parsedSales, err := parser.ParseDataSales()
-	assert.Nil(t, err)
-	cant, err := serviceSales.InsertAll(parsedSales)
-	fmt.Println(cant)
-	fmt.Println(err)
-
 	parsedInvoices, err := parser.ParseDataInvoices()
 	assert.Nil(t, err)
-	fmt.Println(parsedInvoices)
 
-	cant, err = service.InsertAll(parsedInvoices)
+	cant, err := service.InsertAll(parsedInvoices)
 	assert.Nil(t, err)
 	assert.Equal(t, 100, cant)
 }
