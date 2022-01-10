@@ -12,7 +12,7 @@ var (
 )
 
 func init() {
-	dataSource := "root:Regina57#@tcp(localhost:3306)/hack_db"
+	dataSource := "root:root@tcp(localhost:3306)/hackaton_db"
 	// Open inicia un pool de conexiones. Sólo abrir una vez
 	var err error
 	StorageDB, err = sql.Open("mysql", dataSource)
