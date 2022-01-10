@@ -1,4 +1,4 @@
-package customers
+package products
 
 import (
 	"fmt"
@@ -19,16 +19,16 @@ func TestInsertOk(t *testing.T) {
 
 	service := NewService(repo)
 
-	parsedCustomers, err := parser.ParseDataCustomers()
+	parsedProducts, err := parser.ParseDataProducts()
 	assert.Nil(t, err)
-	fmt.Println(parsedCustomers)
+	fmt.Println(parsedProducts)
 
-	cant, err := service.InsertAll(parsedCustomers)
+	cant, err := service.InsertAll(parsedProducts)
 	assert.Nil(t, err)
-	assert.Equal(t, 50, cant)
+	assert.Equal(t, 100, cant)
 }
 
-func TestInsertCustomersExistents(t *testing.T) {
+func TestInsertExistent(t *testing.T) {
 	db, err := db.InitTxdb()
 	assert.Nil(t, err)
 
@@ -37,14 +37,14 @@ func TestInsertCustomersExistents(t *testing.T) {
 
 	service := NewService(repo)
 
-	parsedCustomers, err := parser.ParseDataCustomers()
+	parsedProducts, err := parser.ParseDataProducts()
 	assert.Nil(t, err)
 
-	cant, err := service.InsertAll(parsedCustomers)
-	assert.Equal(t, 50, cant)
+	cant, err := service.InsertAll(parsedProducts)
+	assert.Equal(t, 100, cant)
 	assert.Nil(t, err)
 
-	cant, err = service.InsertAll(parsedCustomers)
+	cant, err = service.InsertAll(parsedProducts)
 	assert.Equal(t, 0, cant)
 	assert.NotNil(t, err)
 }
@@ -53,20 +53,18 @@ func TestUpdateOK(t *testing.T) {
 	db, err := db.InitTxdb()
 	assert.Nil(t, err)
 
-	newCustomer := []domain.Customers{
+	newProduct := []domain.Products{
 		{
-			Id:        1,
-			LastName:  "asd",
-			FirstName: "asd",
-			Condition: "asd",
+			Id:          1,
+			Description: "Beer - Scottish",
+			Price:       25.99,
 		},
 	}
 
-	customerEdited := domain.Customers{
-		Id:        1,
-		LastName:  "mati",
-		FirstName: "facu",
-		Condition: "hola",
+	editedProduct := domain.Products{
+		Id:          1,
+		Description: "Beer - Golden Ipa",
+		Price:       30.55,
 	}
 
 	repo := NewRepository(db)
@@ -74,23 +72,22 @@ func TestUpdateOK(t *testing.T) {
 
 	service := NewService(repo)
 
-	service.InsertAll(newCustomer)
+	service.InsertAll(newProduct)
 
-	customerResult, err := service.Update(customerEdited)
+	productResult, err := service.Update(editedProduct)
 
 	assert.Nil(t, err)
-	assert.Equal(t, customerEdited, customerResult)
+	assert.Equal(t, editedProduct, productResult)
 }
 
 func TestUpdateIdInexistent(t *testing.T) {
 	db, err := db.InitTxdb()
 	assert.Nil(t, err)
 
-	customerEdited := domain.Customers{
-		Id:        2,
-		LastName:  "mati",
-		FirstName: "facu",
-		Condition: "hola",
+	editedProduct := domain.Products{
+		Id:          1,
+		Description: "Beer - Scottish",
+		Price:       25.99,
 	}
 
 	repo := NewRepository(db)
@@ -98,8 +95,8 @@ func TestUpdateIdInexistent(t *testing.T) {
 
 	service := NewService(repo)
 
-	customerResult, err := service.Update(customerEdited)
+	productResult, err := service.Update(editedProduct)
 
 	assert.Error(t, err)
-	assert.NotEqual(t, customerEdited, customerResult)
+	assert.NotEqual(t, editedProduct, productResult)
 }

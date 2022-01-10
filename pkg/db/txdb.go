@@ -7,14 +7,14 @@ import (
 )
 
 func init() {
-	dataSource := "root:root@tcp(localhost:3306)/hackaton_db"
+	dataSource := "root:Regina57#@tcp(localhost:3306)/hack_db"
 	txdb.Register("txdb", "mysql", dataSource)
 }
 
 func InitTxdb() (*sql.DB, error) {
 	db, err := sql.Open("txdb", "indentificar")
 	if err != nil {
-		return db, err
+		return nil, err
 	}
 	return db, nil
 }

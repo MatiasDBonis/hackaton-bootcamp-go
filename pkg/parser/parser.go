@@ -1,7 +1,8 @@
 package parser
 
 import (
-	"fmt"
+	"encoding/csv"
+	"io"
 	"os"
 	"strings"
 
@@ -10,6 +11,7 @@ import (
 )
 
 func ParseDataCustomers() ([]domain.Customers, error) {
+	setPuntoYComaSeparator()
 	var customersSlice []domain.Customers
 
 	data, err := os.ReadFile("../../datos/customers.txt")
@@ -26,15 +28,11 @@ func ParseDataCustomers() ([]domain.Customers, error) {
 
 	gocsv.UnmarshalString(finalDataString, &customersSlice)
 
-	// fmt.Println("Customer:")
-	// fmt.Println(finalDataString)
-	// fmt.Println("SALTO DE LINEA")
-	// fmt.Println(customersSlice)
-
 	return customersSlice, nil
 }
 
 func ParseDataProducts() ([]domain.Products, error) {
+	setPuntoYComaSeparator()
 	var productsSlice []domain.Products
 
 	data, err := os.ReadFile("../../datos/products.txt")
@@ -50,15 +48,11 @@ func ParseDataProducts() ([]domain.Products, error) {
 	finalDataString := titles + dataStringReplaced
 	gocsv.UnmarshalString(finalDataString, &productsSlice)
 
-	fmt.Println("Products:")
-	fmt.Println(finalDataString)
-	fmt.Println("SALTO DE LINEA")
-	fmt.Println(productsSlice)
-
 	return productsSlice, nil
 }
 
 func ParseDataSales() ([]domain.Sales, error) {
+	setPuntoYComaSeparator()
 	var salesSlice []domain.Sales
 
 	data, err := os.ReadFile("../../datos/sales.txt")
@@ -73,15 +67,11 @@ func ParseDataSales() ([]domain.Sales, error) {
 	finalDataString := titles + dataStringReplaced
 	gocsv.UnmarshalString(finalDataString, &salesSlice)
 
-	fmt.Println("Sales:")
-	fmt.Println(finalDataString)
-	fmt.Println("SALTO DE LINEA")
-	fmt.Println(salesSlice)
-
 	return salesSlice, nil
 }
 
 func ParseDataInvoices() ([]domain.Invoices, error) {
+	setPuntoYComaSeparator()
 	var invoicesSlice []domain.Invoices
 
 	data, err := os.ReadFile("../../datos/invoices.txt")
@@ -97,10 +87,13 @@ func ParseDataInvoices() ([]domain.Invoices, error) {
 	finalDataString := titles + dataStringReplaced
 	gocsv.UnmarshalString(finalDataString, &invoicesSlice)
 
-	//fmt.Println("Invoices:")
-	//fmt.Println(finalDataString)
-	//fmt.Println("SALTO DE LINEA")
-	//fmt.Println(invoicesSlice)
-
 	return invoicesSlice, nil
+}
+
+func setPuntoYComaSeparator() {
+	gocsv.SetCSVReader(func(in io.Reader) gocsv.CSVReader {
+		r := csv.NewReader(in)
+		r.Comma = ';' // This is our separator now
+		return r
+	})
 }

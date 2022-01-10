@@ -1,8 +1,6 @@
 package main
 
 import (
-	"encoding/csv"
-	"io"
 	"strconv"
 
 	"github.com/MatiasDBonis/hackaton-bootcamp-go.git/internal/customers"
@@ -13,15 +11,14 @@ import (
 	"github.com/MatiasDBonis/hackaton-bootcamp-go.git/pkg/db"
 	"github.com/MatiasDBonis/hackaton-bootcamp-go.git/pkg/parser"
 	"github.com/gin-gonic/gin"
-	"github.com/gocarina/gocsv"
 )
 
 func main() {
-	gocsv.SetCSVReader(func(in io.Reader) gocsv.CSVReader {
-		r := csv.NewReader(in)
-		r.Comma = ';' // This is our separator now
-		return r
-	})
+	// gocsv.SetCSVReader(func(in io.Reader) gocsv.CSVReader {
+	// 	r := csv.NewReader(in)
+	// 	r.Comma = ';' // This is our separator now
+	// 	return r
+	// })
 
 	router := gin.Default()
 
