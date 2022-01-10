@@ -14,7 +14,7 @@ func init() {
 func InitTxdb() (*sql.DB, error) {
 	db, err := sql.Open("txdb", "indentificar")
 	if err != nil {
-		return db, err
+		return nil, err
 	}
 	return db, nil
 }

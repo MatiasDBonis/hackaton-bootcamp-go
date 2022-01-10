@@ -29,20 +29,16 @@ func (r *repository) Insert(customer domain.Customers) (domain.Customers, error)
 	}
 	defer stmt.Close()
 
-	result, err := stmt.Exec(customer.Id, customer.LastName, customer.FirstName, customer.Condition)
+	_, err = stmt.Exec(customer.Id, customer.LastName, customer.FirstName, customer.Condition)
 	if err != nil {
 		return domain.Customers{}, err
-	}
-	rowsAffected, _ := result.RowsAffected()
-	if rowsAffected == 0 {
-		return domain.Customers{}, errors.New("no se insertó el customer")
 	}
 
 	return customer, nil
 }
 
 func (r *repository) Update(customer domain.Customers) (domain.Customers, error) {
-	stmt, err := r.db.Prepare("UPDATE customers SET lastname = ?, firstname = ?, condition = ? WHERE id = ?")
+	stmt, err := r.db.Prepare("UPDATE customers SET lastname = ?, firstname = ?, condicion = ? WHERE id = ?")
 	if err != nil {
 		log.Fatal(err)
 	}

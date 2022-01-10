@@ -1,7 +1,9 @@
 package parser
 
 import (
+	"encoding/csv"
 	"fmt"
+	"io"
 	"os"
 	"strings"
 
@@ -10,6 +12,7 @@ import (
 )
 
 func ParseDataCustomers() ([]domain.Customers, error) {
+	setPuntoYComaSeparator()
 	var customersSlice []domain.Customers
 
 	data, err := os.ReadFile("../../datos/customers.txt")
@@ -35,6 +38,7 @@ func ParseDataCustomers() ([]domain.Customers, error) {
 }
 
 func ParseDataProducts() ([]domain.Products, error) {
+	setPuntoYComaSeparator()
 	var productsSlice []domain.Products
 
 	data, err := os.ReadFile("../../datos/products.txt")
@@ -59,6 +63,7 @@ func ParseDataProducts() ([]domain.Products, error) {
 }
 
 func ParseDataSales() ([]domain.Sales, error) {
+	setPuntoYComaSeparator()
 	var salesSlice []domain.Sales
 
 	data, err := os.ReadFile("../../datos/sales.txt")
@@ -82,6 +87,7 @@ func ParseDataSales() ([]domain.Sales, error) {
 }
 
 func ParseDataInvoices() ([]domain.Invoices, error) {
+	setPuntoYComaSeparator()
 	var invoicesSlice []domain.Invoices
 
 	data, err := os.ReadFile("../../datos/invoices.txt")
@@ -103,4 +109,12 @@ func ParseDataInvoices() ([]domain.Invoices, error) {
 	//fmt.Println(invoicesSlice)
 
 	return invoicesSlice, nil
+}
+
+func setPuntoYComaSeparator() {
+	gocsv.SetCSVReader(func(in io.Reader) gocsv.CSVReader {
+		r := csv.NewReader(in)
+		r.Comma = ';' // This is our separator now
+		return r
+	})
 }
