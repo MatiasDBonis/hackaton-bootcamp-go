@@ -6,3 +6,8 @@ type Customers struct {
 	FirstName string `csv:"first_name"`
 	Condition string `csv:"condition"`
 }
+
+type DTOCustomerTotals struct {
+	Status string
+	Total  string
+}

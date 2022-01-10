@@ -2,6 +2,7 @@ package parser
 
 import (
 	"encoding/csv"
+
 	"io"
 	"os"
 	"strings"
@@ -66,6 +67,7 @@ func ParseDataSales() ([]domain.Sales, error) {
 
 	finalDataString := titles + dataStringReplaced
 	gocsv.UnmarshalString(finalDataString, &salesSlice)
+
 
 	return salesSlice, nil
 }

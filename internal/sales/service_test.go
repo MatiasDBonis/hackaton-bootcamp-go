@@ -1,4 +1,4 @@
-package invoices
+package sales
 
 import (
 	"testing"
@@ -18,15 +18,14 @@ func TestInsertOk(t *testing.T) {
 
 	service := NewService(repo)
 
-	parsedInvoices, err := parser.ParseDataInvoices()
+	parsedSales, err := parser.ParseDataSales()
 	assert.Nil(t, err)
-
-	cant, err := service.InsertAll(parsedInvoices)
+	cant, err := service.InsertAll(parsedSales)
 	assert.Nil(t, err)
-	assert.Equal(t, 100, cant)
+	assert.Equal(t, 1000, cant)
 }
 
-func TestInsertExistent(t *testing.T) {
+func TestInsertCustomersExistents(t *testing.T) {
 	db, err := db.InitTxdb()
 	assert.Nil(t, err)
 
@@ -35,14 +34,14 @@ func TestInsertExistent(t *testing.T) {
 
 	service := NewService(repo)
 
-	parsedInvoices, err := parser.ParseDataInvoices()
+	parsedSales, err := parser.ParseDataSales()
 	assert.Nil(t, err)
 
-	cant, err := service.InsertAll(parsedInvoices)
-	assert.Equal(t, 100, cant)
+	cant, err := service.InsertAll(parsedSales)
+	assert.Equal(t, 1000, cant)
 	assert.Nil(t, err)
 
-	cant, err = service.InsertAll(parsedInvoices)
+	cant, err = service.InsertAll(parsedSales)
 	assert.Equal(t, 0, cant)
 	assert.NotNil(t, err)
 }
@@ -51,20 +50,20 @@ func TestUpdateOK(t *testing.T) {
 	db, err := db.InitTxdb()
 	assert.Nil(t, err)
 
-	newInvoice := []domain.Invoices{
+	newSales := []domain.Sales{
 		{
-			Id:         1,
-			Datetime:   "2021-12-8 22:53:32",
-			IdCustomer: 5,
-			Total:      250.44,
+			Id:        1,
+			IdInvoice: 1,
+			IdProduct: 1,
+			Quantity:  10,
 		},
 	}
 
-	invoiceEdited := domain.Invoices{
-		Id:         1,
-		Datetime:   "2021-12-8 22:53:35",
-		IdCustomer: 8,
-		Total:      255.55,
+	salesEdited := domain.Sales{
+		Id:        1,
+		IdInvoice: 2,
+		IdProduct: 2,
+		Quantity:  20,
 	}
 
 	repo := NewRepository(db)
@@ -72,23 +71,23 @@ func TestUpdateOK(t *testing.T) {
 
 	service := NewService(repo)
 
-	service.InsertAll(newInvoice)
+	service.InsertAll(newSales)
 
-	invoiceResult, err := service.Update(invoiceEdited)
+	salesResult, err := service.Update(salesEdited)
 
 	assert.Nil(t, err)
-	assert.Equal(t, invoiceEdited, invoiceResult)
+	assert.Equal(t, salesEdited, salesResult)
 }
 
 func TestUpdateIdInexistent(t *testing.T) {
 	db, err := db.InitTxdb()
 	assert.Nil(t, err)
 
-	invoiceEdited := domain.Invoices{
-		Id:         2,
-		Datetime:   "2021-12-8 22:53:32",
-		IdCustomer: 5,
-		Total:      250.44,
+	salesEdited := domain.Sales{
+		Id:        2,
+		IdInvoice: 1,
+		IdProduct: 1,
+		Quantity:  10,
 	}
 
 	repo := NewRepository(db)
@@ -96,8 +95,8 @@ func TestUpdateIdInexistent(t *testing.T) {
 
 	service := NewService(repo)
 
-	invoiceResult, err := service.Update(invoiceEdited)
+	salesResult, err := service.Update(salesEdited)
 
 	assert.Error(t, err)
-	assert.NotEqual(t, invoiceEdited, invoiceResult)
+	assert.NotEqual(t, salesEdited, salesResult)
 }

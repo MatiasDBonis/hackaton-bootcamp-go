@@ -3,6 +3,7 @@ package products
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 	"log"
 
 	"github.com/MatiasDBonis/hackaton-bootcamp-go.git/internal/domain"
@@ -30,6 +31,7 @@ func (r *repository) Insert(product domain.Products) (domain.Products, error) {
 
 	_, err = stmt.Exec(product.Id, product.Description, product.Price)
 	if err != nil {
+		fmt.Println(err.Error())
 		return domain.Products{}, err
 	}
 

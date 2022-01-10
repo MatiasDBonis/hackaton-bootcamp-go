@@ -1,6 +1,7 @@
 package main
 
 import (
+
 	"strconv"
 
 	"github.com/MatiasDBonis/hackaton-bootcamp-go.git/internal/customers"
@@ -43,6 +44,8 @@ func main() {
 	router.PUT("/products/update/:id", updateProducts(serviceProducts))
 	router.PUT("/sales/update/:id", updateSales(serviceSales))
 	router.PUT("/invoices/update/:id", updateInvoices(serviceInvoices))
+
+	router.GET("/customers", GetTotals(serviceCustomers))
 
 	router.Run()
 }
@@ -144,9 +147,9 @@ func insertAllSales(service sales.Service) gin.HandlerFunc {
 
 		parsedSales, err := parser.ParseDataSales()
 		if err != nil {
-			panic(err.Error())
+			ctx.String(500, err.Error())
 		}
-
+		fmt.Println(parsedSales)
 		rowsAffected, err := service.InsertAll(parsedSales)
 
 		if err != nil {
@@ -224,6 +227,19 @@ func updateInvoices(service invoices.Service) gin.HandlerFunc {
 			ctx.String(400, "Hubo un error %v", err.Error())
 		} else {
 			ctx.String(200, "Registros afectados: %v", rowsAffected)
+		}
+	}
+}
+
+func GetTotals(service customers.Service) gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+
+		data, err := service.GetTotals()
+
+		if err != nil {
+			ctx.String(400, "Hubo un error: %v", err.Error())
+		} else {
+			ctx.String(200, "Data: %v", data)
 		}
 	}
 }

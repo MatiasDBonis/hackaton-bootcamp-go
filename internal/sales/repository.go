@@ -28,13 +28,9 @@ func (r *repository) Insert(sale domain.Sales) (domain.Sales, error) {
 	}
 	defer stmt.Close()
 
-	result, err := stmt.Exec(sale.Id, sale.IdInvoice, sale.IdProduct, sale.Quantity)
+	_, err = stmt.Exec(sale.Id, sale.IdInvoice, sale.IdProduct, sale.Quantity)
 	if err != nil {
 		return domain.Sales{}, err
-	}
-	rowsAffected, _ := result.RowsAffected()
-	if rowsAffected == 0 {
-		return domain.Sales{}, errors.New("no se insertó la sale")
 	}
 
 	return sale, nil
