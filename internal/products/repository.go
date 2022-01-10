@@ -29,14 +29,10 @@ func (r *repository) Insert(product domain.Products) (domain.Products, error) {
 	}
 	defer stmt.Close()
 
-	result, err := stmt.Exec(product.Id, product.Description, product.Price)
+	_, err = stmt.Exec(product.Id, product.Description, product.Price)
 	if err != nil {
 		fmt.Println(err.Error())
 		return domain.Products{}, err
-	}
-	rowsAffected, _ := result.RowsAffected()
-	if rowsAffected == 0 {
-		return domain.Products{}, errors.New("no se insertó el product")
 	}
 
 	return product, nil

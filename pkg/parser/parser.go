@@ -2,7 +2,7 @@ package parser
 
 import (
 	"encoding/csv"
-	"fmt"
+
 	"io"
 	"os"
 	"strings"
@@ -29,11 +29,6 @@ func ParseDataCustomers() ([]domain.Customers, error) {
 
 	gocsv.UnmarshalString(finalDataString, &customersSlice)
 
-	// fmt.Println("Customer:")
-	// fmt.Println(finalDataString)
-	// fmt.Println("SALTO DE LINEA")
-	// fmt.Println(customersSlice)
-
 	return customersSlice, nil
 }
 
@@ -54,11 +49,6 @@ func ParseDataProducts() ([]domain.Products, error) {
 	finalDataString := titles + dataStringReplaced
 	gocsv.UnmarshalString(finalDataString, &productsSlice)
 
-	fmt.Println("Products:")
-	fmt.Println(finalDataString)
-	fmt.Println("SALTO DE LINEA")
-	fmt.Println(productsSlice)
-
 	return productsSlice, nil
 }
 
@@ -78,12 +68,7 @@ func ParseDataSales() ([]domain.Sales, error) {
 	finalDataString := titles + dataStringReplaced
 	gocsv.UnmarshalString(finalDataString, &salesSlice)
 
-	/*
-		fmt.Println("Sales:")
-		fmt.Println(finalDataString)
-		fmt.Println("SALTO DE LINEA")
-		fmt.Println(salesSlice)
-	*/
+
 	return salesSlice, nil
 }
 
@@ -103,11 +88,6 @@ func ParseDataInvoices() ([]domain.Invoices, error) {
 
 	finalDataString := titles + dataStringReplaced
 	gocsv.UnmarshalString(finalDataString, &invoicesSlice)
-
-	//fmt.Println("Invoices:")
-	//fmt.Println(finalDataString)
-	//fmt.Println("SALTO DE LINEA")
-	//fmt.Println(invoicesSlice)
 
 	return invoicesSlice, nil
 }

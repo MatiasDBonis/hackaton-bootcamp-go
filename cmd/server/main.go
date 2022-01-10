@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+
 	"strconv"
 
 	"github.com/MatiasDBonis/hackaton-bootcamp-go.git/internal/customers"
