@@ -1,9 +1,14 @@
-package internal
+package customers
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/MatiasDBonis/hackaton-bootcamp-go.git/internal/domain"
+)
 
 type Service interface {
-	InsertAll([]Customers) (int, error)
+	InsertAll([]domain.Customers) (int, error)
+	Update(customer domain.Customers) (domain.Customers, error)
 }
 
 type service struct {
@@ -14,7 +19,7 @@ func NewService(repository Repository) Service {
 	return &service{repo: repository}
 }
 
-func (s *service) InsertAll(customers []Customers) (int, error) {
+func (s *service) InsertAll(customers []domain.Customers) (int, error) {
 	affectedRows := 0
 	totalRows := len(customers)
 
@@ -29,4 +34,8 @@ func (s *service) InsertAll(customers []Customers) (int, error) {
 		return affectedRows, fmt.Errorf("hubo error insertando %v customers", totalRows-affectedRows)
 	}
 	return affectedRows, nil
+}
+
+func (s *service) Update(customer domain.Customers) (domain.Customers, error) {
+	return s.repo.Update(customer)
 }

@@ -5,19 +5,16 @@ import (
 	"os"
 	"strings"
 
-	customers "github.com/MatiasDBonis/hackaton-bootcamp-go.git/internal/customers"
-	invoices "github.com/MatiasDBonis/hackaton-bootcamp-go.git/internal/invoices"
-	products "github.com/MatiasDBonis/hackaton-bootcamp-go.git/internal/products"
-	sales "github.com/MatiasDBonis/hackaton-bootcamp-go.git/internal/sales"
+	domain "github.com/MatiasDBonis/hackaton-bootcamp-go.git/internal/domain"
 	"github.com/gocarina/gocsv"
 )
 
-func ParseDataCustomers() ([]customers.Customers, error) {
-	var customersSlice []customers.Customers
+func ParseDataCustomers() ([]domain.Customers, error) {
+	var customersSlice []domain.Customers
 
 	data, err := os.ReadFile("../../datos/customers.txt")
 	if err != nil {
-		return []customers.Customers{}, err
+		return []domain.Customers{}, err
 	}
 
 	dataString := string(data)
@@ -37,12 +34,12 @@ func ParseDataCustomers() ([]customers.Customers, error) {
 	return customersSlice, nil
 }
 
-func ParseDataProducts() ([]products.Products, error) {
-	var productsSlice []products.Products
+func ParseDataProducts() ([]domain.Products, error) {
+	var productsSlice []domain.Products
 
 	data, err := os.ReadFile("../../datos/products.txt")
 	if err != nil {
-		return []products.Products{}, err
+		return []domain.Products{}, err
 	}
 
 	dataString := string(data)
@@ -61,12 +58,12 @@ func ParseDataProducts() ([]products.Products, error) {
 	return productsSlice, nil
 }
 
-func ParseDataSales() ([]sales.Sales, error) {
-	var salesSlice []sales.Sales
+func ParseDataSales() ([]domain.Sales, error) {
+	var salesSlice []domain.Sales
 
 	data, err := os.ReadFile("../../datos/sales.txt")
 	if err != nil {
-		return []sales.Sales{}, err
+		return []domain.Sales{}, err
 	}
 	dataString := string(data)
 	dataStringReplaced := strings.ReplaceAll(dataString, "#$%#", ";")
@@ -84,12 +81,12 @@ func ParseDataSales() ([]sales.Sales, error) {
 	return salesSlice, nil
 }
 
-func ParseDataInvoices() ([]invoices.Invoices, error) {
-	var invoicesSlice []invoices.Invoices
+func ParseDataInvoices() ([]domain.Invoices, error) {
+	var invoicesSlice []domain.Invoices
 
 	data, err := os.ReadFile("../../datos/invoices.txt")
 	if err != nil {
-		return []invoices.Invoices{}, err
+		return []domain.Invoices{}, err
 	}
 
 	dataString := string(data)

@@ -1,20 +1,16 @@
-package internal
+package products
 
 import (
 	"database/sql"
 	"errors"
 	"log"
+
+	"github.com/MatiasDBonis/hackaton-bootcamp-go.git/internal/domain"
 )
 
-type Products struct {
-	Id          int     `csv:"id"`
-	Description string  `csv:"description"`
-	Price       float32 `csv:"price"`
-}
-
 type Repository interface {
-	Insert(customer Products) (Products, error)
-	Update(customer Products) (Products, error)
+	Insert(customer domain.Products) (domain.Products, error)
+	Update(customer domain.Products) (domain.Products, error)
 }
 
 type repository struct {
@@ -25,7 +21,7 @@ func NewRepository(db *sql.DB) Repository {
 	return &repository{db: db}
 }
 
-func (r *repository) Insert(product Products) (Products, error) {
+func (r *repository) Insert(product domain.Products) (domain.Products, error) {
 	stmt, err := r.db.Prepare("INSERT INTO products (id, description, price) VALUES(?, ?, ?)")
 	if err != nil {
 		log.Fatal(err)
@@ -34,17 +30,17 @@ func (r *repository) Insert(product Products) (Products, error) {
 
 	result, err := stmt.Exec(product.Id, product.Description, product.Price)
 	if err != nil {
-		return Products{}, err
+		return domain.Products{}, err
 	}
 	rowsAffected, _ := result.RowsAffected()
 	if rowsAffected == 0 {
-		return Products{}, errors.New("no se insertó el product")
+		return domain.Products{}, errors.New("no se insertó el product")
 	}
 
 	return product, nil
 }
 
-func (r *repository) Update(product Products) (Products, error) {
+func (r *repository) Update(product domain.Products) (domain.Products, error) {
 	stmt, err := r.db.Prepare("UPDATE products SET description = ?, price = ? WHERE id = ?")
 	if err != nil {
 		log.Fatal(err)
@@ -53,11 +49,11 @@ func (r *repository) Update(product Products) (Products, error) {
 
 	result, err := stmt.Exec(product.Description, product.Price, product.Id)
 	if err != nil {
-		return Products{}, err
+		return domain.Products{}, err
 	}
 	rowsAffected, _ := result.RowsAffected()
 	if rowsAffected == 0 {
-		return Products{}, errors.New("no se insertó el product")
+		return domain.Products{}, errors.New("no se actualizó el product")
 	}
 
 	return product, nil

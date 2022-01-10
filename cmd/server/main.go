@@ -3,13 +3,15 @@ package main
 import (
 	"encoding/csv"
 	"io"
+	"strconv"
 
-	customers "github.com/MatiasDBonis/hackaton-bootcamp-go.git/internal/customers"
-	invoices "github.com/MatiasDBonis/hackaton-bootcamp-go.git/internal/invoices"
-	products "github.com/MatiasDBonis/hackaton-bootcamp-go.git/internal/products"
-	sales "github.com/MatiasDBonis/hackaton-bootcamp-go.git/internal/sales"
+	"github.com/MatiasDBonis/hackaton-bootcamp-go.git/internal/customers"
+	"github.com/MatiasDBonis/hackaton-bootcamp-go.git/internal/domain"
+	"github.com/MatiasDBonis/hackaton-bootcamp-go.git/internal/invoices"
+	"github.com/MatiasDBonis/hackaton-bootcamp-go.git/internal/products"
+	"github.com/MatiasDBonis/hackaton-bootcamp-go.git/internal/sales"
 	"github.com/MatiasDBonis/hackaton-bootcamp-go.git/pkg/db"
-	parser "github.com/MatiasDBonis/hackaton-bootcamp-go.git/pkg/parser"
+	"github.com/MatiasDBonis/hackaton-bootcamp-go.git/pkg/parser"
 	"github.com/gin-gonic/gin"
 	"github.com/gocarina/gocsv"
 )
@@ -40,6 +42,11 @@ func main() {
 	router.POST("/sales/insertAll", insertAllSales(serviceSales))
 	router.POST("/invoices/insertAll", insertAllInvoices(serviceInvoices))
 
+	router.PUT("/customers/update/:id", updateCustomers(serviceCustomers))
+	router.PUT("/products/update/:id", updateProducts(serviceProducts))
+	router.PUT("/sales/update/:id", updateSales(serviceSales))
+	router.PUT("/invoices/update/:id", updateInvoices(serviceInvoices))
+
 	router.Run()
 }
 
@@ -53,6 +60,33 @@ func insertAllCustomers(service customers.Service) gin.HandlerFunc {
 		}
 
 		rowsAffected, err := service.InsertAll(parsedCustomers)
+
+		if err != nil {
+			ctx.String(400, "Hubo un error %v", err.Error())
+		} else {
+			ctx.String(200, "Registros afectados: %v", rowsAffected)
+		}
+	}
+}
+
+func updateCustomers(service customers.Service) gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+
+		var customer domain.Customers
+		err := ctx.ShouldBindJSON(&customer)
+		if err != nil {
+			ctx.String(400, "Error al procesar JSON")
+		}
+
+		paramId := ctx.Param("id")
+
+		customer.Id, err = strconv.Atoi(paramId)
+
+		if err != nil {
+			ctx.String(400, "Error al procesar el ID")
+		}
+
+		rowsAffected, err := service.Update(customer)
 
 		if err != nil {
 			ctx.String(400, "Hubo un error %v", err.Error())
@@ -81,6 +115,32 @@ func insertAllProducts(service products.Service) gin.HandlerFunc {
 	}
 }
 
+func updateProducts(service products.Service) gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+
+		var product domain.Products
+		err := ctx.ShouldBindJSON(&product)
+		if err != nil {
+			ctx.String(400, "Error al procesar JSON")
+		}
+		paramId := ctx.Param("id")
+
+		product.Id, err = strconv.Atoi(paramId)
+
+		if err != nil {
+			ctx.String(400, "Error al procesar el ID")
+		}
+
+		rowsAffected, err := service.Update(product)
+
+		if err != nil {
+			ctx.String(400, "Hubo un error %v", err.Error())
+		} else {
+			ctx.String(200, "Registros afectados: %v", rowsAffected)
+		}
+	}
+}
+
 //Endpoints sales
 func insertAllSales(service sales.Service) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
@@ -100,7 +160,33 @@ func insertAllSales(service sales.Service) gin.HandlerFunc {
 	}
 }
 
-//Endpoints sales
+func updateSales(service sales.Service) gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+
+		var sale domain.Sales
+		err := ctx.ShouldBindJSON(&sale)
+		if err != nil {
+			ctx.String(400, "Error al procesar JSON")
+		}
+		paramId := ctx.Param("id")
+
+		sale.Id, err = strconv.Atoi(paramId)
+
+		if err != nil {
+			ctx.String(400, "Error al procesar el ID")
+		}
+
+		rowsAffected, err := service.Update(sale)
+
+		if err != nil {
+			ctx.String(400, "Hubo un error %v", err.Error())
+		} else {
+			ctx.String(200, "Registros afectados: %v", rowsAffected)
+		}
+	}
+}
+
+//Endpoints invoices
 func insertAllInvoices(service invoices.Service) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 
@@ -110,6 +196,32 @@ func insertAllInvoices(service invoices.Service) gin.HandlerFunc {
 		}
 
 		rowsAffected, err := service.InsertAll(parsedInvoices)
+
+		if err != nil {
+			ctx.String(400, "Hubo un error %v", err.Error())
+		} else {
+			ctx.String(200, "Registros afectados: %v", rowsAffected)
+		}
+	}
+}
+
+func updateInvoices(service invoices.Service) gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+
+		var invoice domain.Invoices
+		err := ctx.ShouldBindJSON(&invoice)
+		if err != nil {
+			ctx.String(400, "Error al procesar JSON")
+		}
+		paramId := ctx.Param("id")
+
+		invoice.Id, err = strconv.Atoi(paramId)
+
+		if err != nil {
+			ctx.String(400, "Error al procesar el ID")
+		}
+
+		rowsAffected, err := service.Update(invoice)
 
 		if err != nil {
 			ctx.String(400, "Hubo un error %v", err.Error())
