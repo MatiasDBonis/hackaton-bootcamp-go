@@ -25,7 +25,6 @@ func (s *service) InsertAll(sales []domain.Sales) (int, error) {
 
 	for _, sale := range sales {
 		_, err := s.repo.Insert(sale)
-		fmt.Println(err.Error())
 		if err == nil {
 			affectedRows++
 		}

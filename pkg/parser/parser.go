@@ -78,11 +78,12 @@ func ParseDataSales() ([]domain.Sales, error) {
 	finalDataString := titles + dataStringReplaced
 	gocsv.UnmarshalString(finalDataString, &salesSlice)
 
-	fmt.Println("Sales:")
-	fmt.Println(finalDataString)
-	fmt.Println("SALTO DE LINEA")
-	fmt.Println(salesSlice)
-
+	/*
+		fmt.Println("Sales:")
+		fmt.Println(finalDataString)
+		fmt.Println("SALTO DE LINEA")
+		fmt.Println(salesSlice)
+	*/
 	return salesSlice, nil
 }
 
